@@ -125,6 +125,7 @@ class BaseResult(dbtClassMixin):
     adapter_response: Dict[str, Any]
     message: Optional[str]
     failures: Optional[int]
+    return_value: Optional[Any]
 
     @classmethod
     def __pre_deserialize__(cls, data):
@@ -133,6 +134,8 @@ class BaseResult(dbtClassMixin):
             data["message"] = None
         if "failures" not in data:
             data["failures"] = None
+        if "return_value" not in data:
+            data["return_value"] = None
         return data
 
     def to_msg_dict(self):
@@ -144,6 +147,7 @@ class BaseResult(dbtClassMixin):
             "num_failures": cast_to_int(self.failures),
             "timing_info": [ti.to_msg_dict() for ti in self.timing],
             "adapter_response": self.adapter_response,
+            "return_value": self.return_value,
         }
         return msg_dict
 
@@ -175,6 +179,7 @@ class RunResult(NodeResult):
             node=node,
             adapter_response={},
             failures=None,
+            return_value=None,
         )
 
 
@@ -224,6 +229,7 @@ def process_run_result(result: RunResult) -> RunResultOutput:
         compiled=result.node.compiled if compiled else None,  # type:ignore
         compiled_code=result.node.compiled_code if compiled else None,  # type:ignore
         relation_name=result.node.relation_name if compiled else None,  # type:ignore
+        return_value=result.return_value,
     )
 
 
