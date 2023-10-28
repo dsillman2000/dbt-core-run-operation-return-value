@@ -533,6 +533,7 @@ def test_single_run_error():
             adapter_response=dict(),
             message="oh no!",
             failures=[],
+            return_value=None,
         )
 
         print_run_result_error(error_result)
