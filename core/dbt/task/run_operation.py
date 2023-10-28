@@ -53,9 +53,10 @@ class RunOperationTask(ConfiguredTask):
         success = True
 
         package_name, macro_name = self._get_macro_parts()
+        return_value = None
 
         try:
-            self._run_unsafe(package_name, macro_name)
+            return_value = self._run_unsafe(package_name, macro_name)
         except dbt.exceptions.Exception as exc:
             fire_event(RunningOperationCaughtError(exc=str(exc)))
             fire_event(LogDebugStackTrace(exc_info=traceback.format_exc()))
@@ -100,6 +101,7 @@ class RunOperationTask(ConfiguredTask):
                 path="",
                 original_file_path="",
             ),
+            return_value=return_value,
             thread_id=threading.current_thread().name,
             timing=[TimingInfo(name=macro_name, started_at=start, completed_at=end)],
         )
